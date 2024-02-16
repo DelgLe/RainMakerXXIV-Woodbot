@@ -226,7 +226,7 @@ public class RobotContainer {
     // operatorController.a().whileTrue(new SetFlywheel());
     // operatorController.b().toggleOnTrue(runExtendIntake);
 
-    driverController.b().onTrue(drivetrain.turntoCMD(true, drivetrain.getRotation2d().getDegrees()- photon.getAngle(), 0.0, 0.0));
+   // driverController.b().onTrue(drivetrain.turntoCMD(true, drivetrain.getRotation2d().getDegrees()- photon.getAngle(), 0.0, 0.0));
     // driverController.a().whileTrue(drivetrain.turntoCMD(true, 180.0, 0.0, 0.0))
     // driverController.x().whileTrue(new InstantCommand(() -> drivetrain.zero(), drivetrain));
     

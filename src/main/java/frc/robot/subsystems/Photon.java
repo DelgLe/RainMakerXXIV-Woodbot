@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.photonvision.EstimatedRobotPose;
@@ -32,12 +33,11 @@ import frc.robot.Robot;
 
 public class Photon extends SubsystemBase {
   /** Creates a new Photon. */
-  public final String kCameraName = "Inno_Camera1"  ;
-  private final PhotonCamera camera;
+  private final String[] cameraNames = {"Inno_Camera1"};
+  private ArrayList<PhotonCamera> cameras = new ArrayList<>();
+  private ArrayList<PhotonPoseEstimator> poseEstimators = new ArrayList<>();
 
 // this Should be the poseestimator for the center of the robot relative to the april tag
-private final PhotonPoseEstimator photonEstimator13; 
-
 private double lastEstTimestamp = 0;
 
         // Cam mounted facing forward, half a meter forward of center, half a meter up from center. THESE ARE NOT RIGHT AS OF 2/11/24
@@ -60,15 +60,17 @@ private double lastEstTimestamp = 0;
 
   
   public Photon() {
-    camera = new PhotonCamera(kCameraName);
-
-      photonEstimator13 =
-       new PhotonPoseEstimator(
-     kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, kRobotToCam);
-        
-
+  for(String cameraName : cameraNames) {
+    cameras.add(new PhotonCamera(cameraName));
+  }
+  for(PhotonCamera camera : cameras) {
+    poseEstimators.add(new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, camera, kRobotToCam));
+  }
+  for(PhotonPoseEstimator estimator: poseEstimators) {
+    estimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+  }
+ 
      // we'll have to play around with this 
-     photonEstimator13.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
 
   }
@@ -78,31 +80,39 @@ private double lastEstTimestamp = 0;
 
   }
 
-  public PhotonPipelineResult getPipelineResult() {
-    PhotonPipelineResult pipelineResult = camera.getLatestResult();
-    return pipelineResult ;
-
+  public ArrayList<PhotonPipelineResult> getPipelineResult() {
+    ArrayList<PhotonPipelineResult> pipelineResults = new ArrayList<>();
+    for(PhotonCamera camera : cameras) {
+      pipelineResults.add(camera.getLatestResult());
+    }
+    return pipelineResults;
   }
 
 
-  public boolean getHasTarget() {
-  var result = camera.getLatestResult();
-  Boolean hasTar = result.hasTargets();
-return hasTar ;
+  public ArrayList<Boolean> getHasTarget() {
+    ArrayList<Boolean> hasTargets = new ArrayList<>();
+    for(PhotonCamera camera : cameras) {
+      hasTargets.add(camera.getLatestResult().hasTargets());
+    }
+  return hasTargets;
   }
 
 // https://github.com/Mechanical-Advantage/RobotCode2024/blob/main/src/main/java/org/littletonrobotics/frc2024/subsystems/apriltagvision/AprilTagVision.java
 
- public double getAngle() {
-  var result = camera.getLatestResult();
-  double angle = result.getBestTarget().getYaw();
-  return angle ;
-
+ public ArrayList<Double> getAngles() {
+  ArrayList<Double> angles = new ArrayList<>();
+  for(PhotonCamera camera : cameras) {
+    angles.add(camera.getLatestResult().getBestTarget().getYaw());
+  }
+  return angles;
  }
 
- 
+ //TODO im not gonna change anything in here because this is lowkey weird since you cant have vars in arrays plus visEst is var so its not even compatible with the return type (possibly)
  // this is the projected pose estimation from the camera
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPoses() {
+      // for(PhotonPoseEstimator estimator : poseEstimators) {
+
+      // }
         var visionEst = photonEstimator13.update();
         double latestTimestamp = camera.getLatestResult().getTimestampSeconds();
         boolean newResult = Math.abs(latestTimestamp - lastEstTimestamp) > 1e-5;
@@ -124,10 +134,11 @@ return hasTar ;
 // return pose;
 //     }
 
-
+//TODO lmao this method is already so messed up im not even gonna try to change this
   //   // this is some logic for rejecting bad poses
    public Matrix<N3, N1> getEstimationStdDevs(Pose2d estimatedPose) {
         var estStdDevs = kSingleTagStdDevs;
+
         var targets = getPipelineResult().getTargets();
   //       int numTags = 0;
   //       double avgDist = 0;
