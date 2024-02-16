@@ -64,7 +64,7 @@ public class CommandSwerveDrivetrain extends SwerveDrivetrain implements Subsyst
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
     final double MaxSpeed = 13.7;
-    boolean shouldUseVisionData = true; 
+    boolean shouldUseVisionData =false; 
 
     CommandSwerveDrivetrain drivetrain = TunerConstants.DriveTrain;
     private static SwerveRequest.FieldCentricFacingAngle drive = new SwerveRequest.FieldCentricFacingAngle();
@@ -167,7 +167,6 @@ private Photon vision ;
         }
 
         
-boolean shouldUseVisionData = true;
 
         //    synchronized (this.m_odometry) {
              //   for (int i = 0; i < vision.getEstimatedGlobalPose()) {
@@ -376,20 +375,19 @@ return m_kine ;
     @Override
     public void periodic() {
 
-            if (shouldUseVisionData) {
+        //     if (shouldUseVisionData) {
 
-        var visionEst = vision.getEstimatedGlobalPose();
-        visionEst.ifPresent(
-                est -> {
-                    var estPose = est.estimatedPose.toPose2d();
-                    // Change our trust in the measurement based on the tags we can see
-                    var estStdDevs = vision.getEstimationStdDevs(estPose);
+        // // var visionEst = vision.getEstimatedGlobalPose();
+        // // visionEst.ifPresent(
+        // //         est -> {
+        // //             var estPose = est.estimatedPose.toPose2d();
+        // //             // Change our trust in the measurement based on the tags we can see
+        // //             var estStdDevs = vision.getEstimationStdDevs(estPose);
 
-                    drivetrain.addVisionMeasurement(
-                            est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-                });
-
-            }
+        // //             drivetrain.addVisionMeasurement(
+        // //                     est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+        // //         });
+        //     }
 
         String moduleName = "null";
         for (int i = 0; i < 4; i++) {

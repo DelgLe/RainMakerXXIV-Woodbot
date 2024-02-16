@@ -187,8 +187,8 @@ public class RobotContainer {
 
 
   private void configureBindings() {
-    driverController.a().whileTrue(drivetrain.turntoCMD(false, 90.0, 0.0, 0.0));
-    operatorController.y().toggleOnTrue(pointToSpeaker);
+    // driverController.a().whileTrue(drivetrain.turntoCMD(false, 90.0, 0.0, 0.0));
+    // operatorController.y().toggleOnTrue(pointToSpeaker);
 
     // powerIntake = new PowerIntake(intake);
     // powerIntakeReversed = new PowerIntakeReversed(intake);
@@ -225,8 +225,8 @@ public class RobotContainer {
     // operatorController.a().whileTrue(new SetFlywheel());
     // operatorController.b().toggleOnTrue(runExtendIntake);
 
-    driverController.b().onTrue(drivetrain.turntoCMD(true, drivetrain.getRotation2d().getRadians() + photon.getAngle(), 0.0, 0.0));
-    // driverController.a().whileTrue(drivetrain.turntoCMD(true, 180.0, 0.0, 0.0));
+    driverController.b().onTrue(drivetrain.turntoCMD(true, drivetrain.getRotation2d().getDegrees()- photon.getAngle(), 0.0, 0.0));
+    // driverController.a().whileTrue(drivetrain.turntoCMD(true, 180.0, 0.0, 0.0))
     // driverController.x().whileTrue(new InstantCommand(() -> drivetrain.zero(), drivetrain));
     
     // operatorController.y().whileTrue(new InstantCommand(() -> flywheel.runBoth(0.8), flywheel));

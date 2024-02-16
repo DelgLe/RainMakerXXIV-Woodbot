@@ -32,7 +32,7 @@ import frc.robot.Robot;
 
 public class Photon extends SubsystemBase {
   /** Creates a new Photon. */
-  public final String kCameraName = "lime_13"  ;
+  public final String kCameraName = "Inno_Camera1"  ;
   private final PhotonCamera camera;
 
 // this Should be the poseestimator for the center of the robot relative to the april tag
@@ -95,8 +95,8 @@ return hasTar ;
 
  public double getAngle() {
   var result = camera.getLatestResult();
-  Double angle = result.getBestTarget().getPitch();
-return angle ;
+  double angle = result.getBestTarget().getYaw();
+  return angle ;
 
  }
 
@@ -114,10 +114,10 @@ return angle ;
 
 
 
-    public double getTimeStamp() {
-        double timestamp = camera.getLatestResult().getTimestampSeconds();
-return timestamp;
-    }
+//     public double getTimeStamp() {
+//         double timestamp = camera.getLatestResult().getTimestampSeconds();
+// return timestamp;
+//     }
 
 //        public Pose3d getPose() {
 //         Pose3d pose = photonEstimator13.getReferencePose();
@@ -125,27 +125,28 @@ return timestamp;
 //     }
 
 
-    // this is some logic for rejecting bad poses
+  //   // this is some logic for rejecting bad poses
    public Matrix<N3, N1> getEstimationStdDevs(Pose2d estimatedPose) {
         var estStdDevs = kSingleTagStdDevs;
         var targets = getPipelineResult().getTargets();
-        int numTags = 0;
-        double avgDist = 0;
-        for (var tgt : targets) {
-            var tagPose = photonEstimator13.getFieldTags().getTagPose(tgt.getFiducialId());
-            if (tagPose.isEmpty()) continue;
-            numTags++;
-            avgDist +=
-                    tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
-        }
-        if (numTags == 0) return estStdDevs;
-        avgDist /= numTags;
-        // Decrease std devs if multiple targets are visible
-        if (numTags > 1) estStdDevs = kMultiTagStdDevs;
-        // Increase std devs based on (average) distance
-        if (numTags == 1 && avgDist > 4)
-            estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
-        else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
+  //       int numTags = 0;
+  //       double avgDist = 0;
+  //       for (var tgt : targets) {
+  //           var tagPose = photonEstimator13.getFieldTags().getTagPose(tgt.getFiducialId());
+  //           if (tagPose.isEmpty()) continue;
+  //           numTags++;
+  //           avgDist +=
+  //                   tagPose.get().toPose2d().getTranslation().getDistance(estimatedPose.getTranslation());
+  //       }
+  //       if (numTags == 0) return estStdDevs;
+  //       avgDist /= numTags;
+        
+  //       // Decrease std devs if multiple targets are visible
+  //       if (numTags > 1) estStdDevs = kMultiTagStdDevs; // if larger than one make multiple
+  //       // Increase std devs based on (average) distance
+  //       if (numTags == 1 && avgDist > 4)  // reject all poses that are based on one tag more than 4 feet away
+  //           estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
+  //       else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30)); // multiple table by d^2 / 30. arbitrary number
 
         return estStdDevs;
 

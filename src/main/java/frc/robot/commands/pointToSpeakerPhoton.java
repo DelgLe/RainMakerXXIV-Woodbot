@@ -44,10 +44,12 @@ Photon photon;
       double angleCamera = photon.getAngle(); //  TODO IS RADAIAnS? SWITCH TO YAW ; 
       currentDriveAngle = drive.getRotation2d().getRadians() ;
 
-      drive.driveFieldCentricFacingAngle(0, 0, currentDriveAngle,angleCamera );// TODO: TEST VELCOITY SPEED WAT THEY DO
-      
+      drive.driveFieldCentricFacingAngle(0, 0, currentDriveAngle,angleCamera );//
+                  System.out.println("no target available" + (angleCamera - currentDriveAngle) ) ;
+
     } else if (!hasTarget)  {
       System.out.println("no target available") ;
+
     }
   }
 
@@ -64,3 +66,4 @@ Photon photon;
     return false;
   }
 }
+ 
